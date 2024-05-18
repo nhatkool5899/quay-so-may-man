@@ -40,7 +40,7 @@ async function startRandom() {
     // Tự động dừng sau 10 giây
     
     
-    setTimeout(stopRandom, 400);
+    setTimeout(stopRandom, 9400);
 }
 
 
