@@ -45,15 +45,15 @@ button {
 
 .result {
     margin-top: 20px;
-    font-size: 18px;
+    font-size: 26px;
     color: #fff;
 }
 
 .result p span{
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   padding-left: 6px;
-  font-size: 22px;
+  font-size: 26px;
 }
 
 .start-random{
