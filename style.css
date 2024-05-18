@@ -18,7 +18,7 @@ body {
 
 .container {
     position: absolute;
-    top: 35%;
+    top: 32%;
     left: 50%;
     transform: translateX(-50%);
 }
@@ -49,6 +49,12 @@ button {
     color: #fff;
 }
 
+.result p span{
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding-left: 6px;
+  font-size: 22px;
+}
 
 .start-random{
     padding: 16px 80px;
@@ -59,14 +65,14 @@ button {
     font-size: 18px;
     box-shadow: inset 0 0 10px yellow;
     border: none;
-    margin: 30px 0;
+    margin: 20px 0;
     position: relative;
     z-index: 999999;
     cursor: pointer;
 }
 
-.start-random{
-    
+.start-random:active{
+    background: rgb(218, 59, 2);
 }
 
 
@@ -221,3 +227,19 @@ button {
     top: 40%;
     animation-delay: -0.3s;
   }
+
+
+
+#my-canvas{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 1;
+  visibility: hidden;
+}
+
+#my-canvas.active{
+  visibility: visible;
+}
