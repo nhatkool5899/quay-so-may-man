@@ -1,8 +1,13 @@
-let data = []; // Mảng chứa toàn bộ dữ liệu từ file Excel
-let intervalId; // Biến lưu trữ interval để chạy và dừng việc hiển thị mã code
+let data = [];
+let quantity = [4,4,3,1,1,1];
+let gift = ['Quạt lửng Asia', 'Quạt lửng Asia', 'Nồi cơm điện', 'Điện thoại Xiaomi', 'Máy giặt Toshiba', 'Tivi Samsung 4K'];
+let number_arr = 0;
+let intervalId; 
 const audioElement = document.getElementById('spin-audio'); 
+const startButton = document.getElementById('start-button');
+const resultTable = document.getElementById('result-table');
 
-// Hàm để đọc file Excel từ đường dẫn cố định
+
 async function loadExcel() {
     await fetch('data-code.xlsx')
         .then(response => response.arrayBuffer())
@@ -10,19 +15,18 @@ async function loadExcel() {
             const workbook = XLSX.read(d, { type: 'array' });
             const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
             const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-            // Lưu dữ liệu vào biến data
+
             data = jsonData;
-            // document.getElementById('code-display').innerText = 'Dữ liệu đã sẵn sàng';
+
 
         })
         .catch(error => console.error('Error loading Excel file:', error));
         
     }
     
-    // Gọi hàm loadExcel khi trang được tải
 window.onload = loadExcel;
 async function startRandom() {
-    await loadExcel()
+    // await loadExcel()
 
     audioElement.play();
 
@@ -30,43 +34,102 @@ async function startRandom() {
         alert('Dữ liệu chưa được tải xong.');
         return;
     }
+
+    startButton.disabled = true;
+
     intervalId = setInterval(() => {
-        const randomIndex = Math.floor(Math.random() * data.length);
-        const randomEntry = data[randomIndex];
+        // const randomIndex = Math.floor(Math.random() * data.length);
+        // const randomEntry = data[randomIndex];
 
-        document.getElementById('code-display').innerText = randomEntry[0]; // Cột mã quay số
-    }, 100); // Thay đổi mã code mỗi 100ms
+        // document.getElementById('code-display').innerText = randomEntry[0];
 
-    // Tự động dừng sau 10 giây
+        const winners = getRandomEntries(data, quantity[number_arr]);
+        const displayText = winners.map(entry => entry[0]).join(', ');
+        document.getElementById('code-display').innerText = displayText;
+    }, 100);
     
     
-    setTimeout(stopRandom, 9400);
+    setTimeout(stopRandom, 9500);
 }
 
 
 async function stopRandom() {
 
-    await loadExcel();
+    // await loadExcel();
 
     clearInterval(intervalId);
-    // const finalCode = document.getElementById('code-display').innerText;
-    // const finalEntry = data.find(entry => entry[0] === finalCode);
 
+    const finalCodes = document.getElementById('code-display').innerText.split(', ');
+    const finalEntries = finalCodes.map(code => {
+        const index = data.findIndex(entry => entry[0] === code);
+        if (index !== -1) {
+            return data.splice(index, 1)[0];
+        }
+        return null;
+    }).filter(entry => entry !== null);
 
-    // if (finalEntry) {
-    //     document.getElementById('final-result').innerText = finalEntry[0];
-    //     document.getElementById('final-phone').innerText = finalEntry[2];
+    // if (finalEntries.length > 0) {
+    //     document.getElementById('final-result').innerText = finalEntries.map(entry => entry[0]).join(', ');
+    //     document.getElementById('final-phone').innerText = finalEntries.map(entry => entry[2]).join(', ');
     // }
 
-    const finalCode = document.getElementById('code-display').innerText;
-    const finalEntryIndex = data.findIndex(entry => entry[0] === finalCode);
 
-    console.log(finalEntryIndex);
+    updateResultTable(finalEntries);
 
-    if (finalEntryIndex !== -1) {
-        const finalEntry = data.splice(finalEntryIndex, 1)[0]; // Xóa và lấy ra phần tử đã quay trúng
-
-        document.getElementById('final-result').innerText = finalEntry[0];
-        document.getElementById('final-phone').innerText = finalEntry[2];
+    if (number_arr < 6) {
+        number_arr = number_arr + 1;
+    }else{
+        return alert('Đã hết 6 lần quay');
     }
+
+    startButton.disabled = false;
+}
+
+function getRandomEntries(array, n) {
+    const result = new Array(n);
+    let len = array.length;
+    const taken = new Array(len);
+    if (n > len) {
+        throw new RangeError("getRandomEntries: nhiều phần tử hơn số lượng mảng hiện có");
+    }
+    while (n--) {
+        const x = Math.floor(Math.random() * len);
+        result[n] = array[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+    }
+    return result;
+}
+
+function updateResultTable(entries) {
+
+    const rows = resultTable.querySelectorAll('.table-row:not(:first-child)');
+    rows.forEach(row => row.remove());
+
+    entries.forEach((entry, index) => {
+        const row = document.createElement('div');
+        row.classList.add('table-row');
+
+        const sttCol = document.createElement('div');
+        sttCol.classList.add('table-col');
+        sttCol.textContent = index + 1;
+
+        const prizeCol = document.createElement('div');
+        prizeCol.classList.add('table-col');
+        prizeCol.textContent = gift[number_arr];
+
+        const codeCol = document.createElement('div');
+        codeCol.classList.add('table-col');
+        codeCol.textContent = entry[0];
+
+        const phoneCol = document.createElement('div');
+        phoneCol.classList.add('table-col');
+        phoneCol.textContent = entry[2];
+
+        row.appendChild(sttCol);
+        row.appendChild(prizeCol);
+        row.appendChild(codeCol);
+        row.appendChild(phoneCol);
+
+        resultTable.appendChild(row);
+    });
 }
