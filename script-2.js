@@ -1,6 +1,6 @@
 let data = [];
-let quantity = [4,4,3,1,1];
-let gift = ['Quạt lửng 5 cánh', 'Quạt lửng 5 cánh', 'Nồi cơm điện', 'Điện thoại', 'Máy giặt'];
+let quantity = [1];
+let gift = ['Tivi 4K 43inch'];
 let number_arr = 0;
 let intervalId; 
 const audioElement = document.getElementById('spin-audio'); 
@@ -10,7 +10,7 @@ const clearButton = document.getElementById('clear-result');
 
 
 async function loadExcel() {
-    await fetch('data-code.xlsx')
+    await fetch('data-code-2.xlsx')
         .then(response => response.arrayBuffer())
         .then(d => {
             const workbook = XLSX.read(d, { type: 'array' });
@@ -27,61 +27,34 @@ async function loadExcel() {
     
 window.onload = loadExcel;
 async function startRandom() {
-    // await loadExcel()
 
     audioElement.play();
-
-    if (data.length === 0) {
-        alert('Dữ liệu chưa được tải xong.');
-        return;
-    }
 
     startButton.disabled = true;
 
     intervalId = setInterval(() => {
-        // const randomIndex = Math.floor(Math.random() * data.length);
-        // const randomEntry = data[randomIndex];
-
-        // document.getElementById('code-display').innerText = randomEntry[0];
-
-        const winners = getRandomEntries(data, quantity[number_arr]);
-        const displayText = winners.map(entry => entry[0]).join(', ');
-        document.getElementById('code-display').innerText = displayText;
+        const randomIndex = Math.floor(Math.random() * data.length);
+        const randomEntry = data[randomIndex];
+        document.getElementById('code-display').innerText = randomEntry[0];
     }, 100);
-    
-    
+
     setTimeout(stopRandom, 10000);
+
 }
 
 
 async function stopRandom() {
 
-    // await loadExcel();
-
     clearInterval(intervalId);
 
-    const finalCodes = document.getElementById('code-display').innerText.split(', ');
-    const finalEntries = finalCodes.map(code => {
-        const index = data.findIndex(entry => entry[0] === code);
-        if (index !== -1) {
-            return data.splice(index, 1)[0];
-        }
-        return null;
-    }).filter(entry => entry !== null);
+    const finalEntry = data[data.length - 1];
 
-    // if (finalEntries.length > 0) {
-    //     document.getElementById('final-result').innerText = finalEntries.map(entry => entry[0]).join(', ');
-    //     document.getElementById('final-phone').innerText = finalEntries.map(entry => entry[2]).join(', ');
-    // }
-
-
-    updateResultTable(finalEntries);
-
-    if (number_arr < 5) {
-        number_arr = number_arr + 1;
-    }else{
-        return alert('Đã hết 5 lần quay');
+    if (finalEntry) {
+        document.getElementById('code-display').innerText = finalEntry[0];
     }
+
+
+    updateResultTable([finalEntry]);
 
     startButton.disabled = false;
 }
