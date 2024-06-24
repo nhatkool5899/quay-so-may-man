@@ -1,11 +1,12 @@
 let data = [];
 let quantity = [4,4,3,1,1,1];
-let gift = ['Quạt lửng Asia', 'Quạt lửng Asia', 'Nồi cơm điện', 'Điện thoại Xiaomi', 'Máy giặt Toshiba', 'Tivi Samsung 4K'];
+let gift = ['Quạt lửng 5 cánh', 'Quạt lửng 5 cánh', 'Nồi cơm điện', 'Điện thoại', 'Máy giặt', 'Tivi 4K 43inch'];
 let number_arr = 0;
 let intervalId; 
 const audioElement = document.getElementById('spin-audio'); 
 const startButton = document.getElementById('start-button');
 const resultTable = document.getElementById('result-table');
+const clearButton = document.getElementById('clear-result');
 
 
 async function loadExcel() {
@@ -132,4 +133,12 @@ function updateResultTable(entries) {
 
         resultTable.appendChild(row);
     });
+}
+
+
+function clearResults() {
+    document.getElementById('code-display').innerText = '';
+
+    const rows = resultTable.querySelectorAll('.table-row:not(:first-child)');
+    rows.forEach(row => row.remove());
 }
